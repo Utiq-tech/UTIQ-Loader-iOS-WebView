@@ -11,7 +11,13 @@ import WebKit
 class ViewController: UIViewController {
     
     private lazy var webView: WKWebView = {
-        let webView = WKWebView()
+        
+        let userContentController = WKUserContentController()
+        userContentController.add(Coordinator(), name: "bridge")
+        let configuration = WKWebViewConfiguration()
+        configuration.userContentController = userContentController
+        
+        let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.translatesAutoresizingMaskIntoConstraints = false
         return webView
     }()
@@ -28,7 +34,8 @@ class ViewController: UIViewController {
         webView.isInspectable = true
         let contentController = self.webView.configuration.userContentController
         contentController.add(self, name: "consentHandler")
-        if let url = URL(string: "https://utiq-test.brand-demo.com/utiq/mobile/mobile-page.html") {
+        //if let url = URL(string: "https://utiq-test.brand-demo.com/utiq/mobile/mobile-page.html") {
+        if let url = URL(string: "http://127.0.0.1:8080/stage/utiq/mobile/mobile-page.html") {
             let resource = URLRequest(url: url)
             webView.load(resource)
         }
