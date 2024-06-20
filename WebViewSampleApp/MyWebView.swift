@@ -36,6 +36,7 @@ class MyWebView{
     }
     
     func showIds(atid: String, mtid: String){
+        //Using 'self.webView.evaluateJavaScript' we are executing the javascript code on the webside and send data in real time
         self.webView.evaluateJavaScript("refreshIds('\(atid)', '\(mtid)');") { (result, error) in
             if let result = result {
                 print("Success: \(result)")

@@ -10,6 +10,7 @@ import SwiftUI
 import WebKit
 import UTIQ
 
+//This class is used to catch the message from the webside 
 class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler{
     
     var showConsentAction: (() -> Void)
