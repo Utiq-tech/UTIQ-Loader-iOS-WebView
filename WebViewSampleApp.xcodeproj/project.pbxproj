@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		004472AF2C207E7E00D9CE83 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 004472AE2C207E7E00D9CE83 /* Coordinator.swift */; };
+		004472C62C22CB3B00D9CE83 /* MyWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 004472C52C22CB3B00D9CE83 /* MyWebView.swift */; };
+		004472D42C23098400D9CE83 /* UTIQ in Frameworks */ = {isa = PBXBuildFile; productRef = 004472D32C23098400D9CE83 /* UTIQ */; };
+		004472D62C230A6000D9CE83 /* utiq_configs.json in Resources */ = {isa = PBXBuildFile; fileRef = 004472D52C230A6000D9CE83 /* utiq_configs.json */; };
 		C9BAD98D2C0E159A008B3D81 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9BAD98C2C0E159A008B3D81 /* AppDelegate.swift */; };
 		C9BAD98F2C0E159A008B3D81 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9BAD98E2C0E159A008B3D81 /* SceneDelegate.swift */; };
 		C9BAD9912C0E159A008B3D81 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9BAD9902C0E159A008B3D81 /* ViewController.swift */; };
@@ -37,6 +41,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		004472AE2C207E7E00D9CE83 /* Coordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
+		004472C52C22CB3B00D9CE83 /* MyWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyWebView.swift; sourceTree = "<group>"; };
+		004472D52C230A6000D9CE83 /* utiq_configs.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = utiq_configs.json; sourceTree = "<group>"; };
 		C9BAD9892C0E159A008B3D81 /* WebViewSampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WebViewSampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9BAD98C2C0E159A008B3D81 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C9BAD98E2C0E159A008B3D81 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -58,6 +65,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				004472D42C23098400D9CE83 /* UTIQ in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -104,11 +112,14 @@
 				C9BAD98C2C0E159A008B3D81 /* AppDelegate.swift */,
 				C9BAD98E2C0E159A008B3D81 /* SceneDelegate.swift */,
 				C9BAD9902C0E159A008B3D81 /* ViewController.swift */,
+				004472C52C22CB3B00D9CE83 /* MyWebView.swift */,
+				004472AE2C207E7E00D9CE83 /* Coordinator.swift */,
 				C9BAD9922C0E159A008B3D81 /* Main.storyboard */,
 				C9BAD9952C0E159E008B3D81 /* Assets.xcassets */,
 				C9BAD9972C0E159E008B3D81 /* LaunchScreen.storyboard */,
 				C9BAD99A2C0E159E008B3D81 /* Info.plist */,
 				C9BAD9BC2C0E1650008B3D81 /* index.html */,
+				004472D52C230A6000D9CE83 /* utiq_configs.json */,
 			);
 			path = WebViewSampleApp;
 			sourceTree = "<group>";
@@ -146,6 +157,9 @@
 			dependencies = (
 			);
 			name = WebViewSampleApp;
+			packageProductDependencies = (
+				004472D32C23098400D9CE83 /* UTIQ */,
+			);
 			productName = WebViewPOC;
 			productReference = C9BAD9892C0E159A008B3D81 /* WebViewSampleApp.app */;
 			productType = "com.apple.product-type.application";
@@ -218,6 +232,9 @@
 				Base,
 			);
 			mainGroup = C9BAD9802C0E159A008B3D81;
+			packageReferences = (
+				004472D22C23098400D9CE83 /* XCRemoteSwiftPackageReference "UTIQ-iOS-SDK" */,
+			);
 			productRefGroup = C9BAD98A2C0E159A008B3D81 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -235,6 +252,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C9BAD9962C0E159E008B3D81 /* Assets.xcassets in Resources */,
+				004472D62C230A6000D9CE83 /* utiq_configs.json in Resources */,
 				C9BAD9BD2C0E1650008B3D81 /* index.html in Resources */,
 				C9BAD9992C0E159E008B3D81 /* Base in Resources */,
 				C9BAD9942C0E159A008B3D81 /* Base in Resources */,
@@ -262,6 +280,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				004472C62C22CB3B00D9CE83 /* MyWebView.swift in Sources */,
+				004472AF2C207E7E00D9CE83 /* Coordinator.swift in Sources */,
 				C9BAD9912C0E159A008B3D81 /* ViewController.swift in Sources */,
 				C9BAD98D2C0E159A008B3D81 /* AppDelegate.swift in Sources */,
 				C9BAD98F2C0E159A008B3D81 /* SceneDelegate.swift in Sources */,
@@ -454,6 +474,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -482,6 +503,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -611,6 +633,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		004472D22C23098400D9CE83 /* XCRemoteSwiftPackageReference "UTIQ-iOS-SDK" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Utiq-tech/UTIQ-iOS-SDK";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.45;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		004472D32C23098400D9CE83 /* UTIQ */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 004472D22C23098400D9CE83 /* XCRemoteSwiftPackageReference "UTIQ-iOS-SDK" */;
+			productName = UTIQ;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C9BAD9812C0E159A008B3D81 /* Project object */;
 }

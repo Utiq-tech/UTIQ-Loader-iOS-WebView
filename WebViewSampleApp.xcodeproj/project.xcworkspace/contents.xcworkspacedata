@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:/Volumes/Store/Projects/Work/Teavaro/POCs/UTIQ-Loader-iOS-WebView/WebViewSampleApp.xcodeproj">
+      location = "self:">
    </FileRef>
 </Workspace>

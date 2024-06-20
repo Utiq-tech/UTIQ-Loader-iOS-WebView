@@ -7,60 +7,62 @@
 
 import UIKit
 import WebKit
+import UTIQ
 
 class ViewController: UIViewController {
     
-    private lazy var webView: WKWebView = {
-        
-        let userContentController = WKUserContentController()
-        userContentController.add(Coordinator(), name: "bridge")
-        let configuration = WKWebViewConfiguration()
-        configuration.userContentController = userContentController
-        
-        let webView = WKWebView(frame: .zero, configuration: configuration)
-        webView.translatesAutoresizingMaskIntoConstraints = false
-        return webView
-    }()
+    let myWebView = MyWebView()
         
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(webView)
-        NSLayoutConstraint.activate([
-            webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            webView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor),
-            webView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor)
-        ])
-        webView.isInspectable = true
-        let contentController = self.webView.configuration.userContentController
-        contentController.add(self, name: "consentHandler")
-        //if let url = URL(string: "https://utiq-test.brand-demo.com/utiq/mobile/mobile-page.html") {
-        if let url = URL(string: "http://127.0.0.1:8080/stage/utiq/mobile/mobile-page.html") {
-            let resource = URLRequest(url: url)
-            webView.load(resource)
-        }
-    }
-}
-
-extension ViewController: WKScriptMessageHandler {
-    
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        guard let dict = message.body as? [String : AnyObject] else {
-            return
-        }
-        print("Js Message", dict)
-        //
-        guard let isConsentGranted = dict["isConsentGranted"] else {
-            return
-        }
-        let script = "document.getElementById('mobile-anchor').innerText = \"\(isConsentGranted)\""
-        webView.evaluateJavaScript(script) { (result, error) in
-            if let result = result {
-                print("Label is updated with message: \(result)")
-            } else if let error = error {
-                print("An error occurred: \(error)")
+        
+        myWebView.addCoordinator(coordinator: Coordinator(showConsentAction: {
+            self.initUtiq(){
+                self.showConsent()
             }
-        }
+        }))
+        
+        view.addSubview(myWebView.webView)
+        NSLayoutConstraint.activate([
+            myWebView.webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            myWebView.webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            myWebView.webView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor),
+            myWebView.webView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor)
+        ])
+        
+        myWebView.loadWebview()
+    }
+    
+    func initUtiq(action: @escaping (() -> Void)){
+        let utiqConfigs = Bundle.main.url(forResource: "utiq_configs", withExtension: "json")!
+        let fileContents = try? String(contentsOf: utiqConfigs)
+        let options = UTIQOptions()
+        options.enableLogging()
+        options.setFallBackConfigJson(json: fileContents!)
+        UTIQ.shared.initialize(sdkToken: "R&Ai^v>TfqCz4Y^HH2?3uk8j", options:  options, success: {
+            action()
+        }, failure: { e in
+            print("Error: \(e)")
+        })
+    }
+    
+    func showConsent(){
+        let alert = UIAlertController(title: "Utiq Consent", message: "", preferredStyle: UIAlertController.Style.alert)
+        alert.addAction(UIAlertAction(title: "Accept", style: UIAlertAction.Style.default, handler: { action in
+            try? UTIQ.shared.acceptConsent()
+            let stubToken = "523393b9b7aa92a534db512af83084506d89e965b95c36f982200e76afcb82cb"
+            UTIQ.shared.startService(stubToken: stubToken, dataCallback: { data in
+                self.myWebView.showIds(atid: data.atid ?? "", mtid: data.mtid ?? "")
+            }, errorCallback: { e in
+                print("Error: \(e)")
+            })
+            
+        }))
+        alert.addAction(UIAlertAction(title: "Reject", style: UIAlertAction.Style.default, handler: { action in
+            try? UTIQ.shared.rejectConsent()
+            self.myWebView.showIds(atid: "consent rejected", mtid: "consent rejected")
+        }))
+        self.present(alert, animated: true, completion: nil)
     }
 }
 

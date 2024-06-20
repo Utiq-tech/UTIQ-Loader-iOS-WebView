@@ -11,18 +11,21 @@ import WebKit
 import UTIQ
 
 class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler{
-    var webView: WKWebView?
     
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!){
-        self.webView = webView
+    var showConsentAction: (() -> Void)
+    
+    init(showConsentAction: @escaping (() -> Void)) {
+        self.showConsentAction = showConsentAction
     }
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        print("iran -> : \(message.body)")
-        switch(message.body as! String){
-        case "show_consent" : do {
-                //show consent popup
-            
+        handleMessage(msg: message.body as! String)
+    }
+    
+    func handleMessage(msg: String){
+        switch(msg){
+            case "show_consent" : do {
+                showConsentAction()
             }
             default: break
         }
