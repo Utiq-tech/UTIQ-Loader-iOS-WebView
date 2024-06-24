@@ -39,9 +39,12 @@ class ViewController: UIViewController {
         let options = UTIQOptions()
         options.enableLogging()
         options.setFallBackConfigJson(json: fileContents!)
+        self.myWebView.showIds(atid: "UTIQ initializing...", mtid: "")
         UTIQ.shared.initialize(sdkToken: "R&Ai^v>TfqCz4Y^HH2?3uk8j", options:  options, success: {
+            self.myWebView.showIds(atid: "UTIQ initialized", mtid: "")
             action()
         }, failure: { e in
+            self.myWebView.showIds(atid: "Error: \(e)", mtid: "")
             print("Error: \(e)")
         })
     }
@@ -51,16 +54,18 @@ class ViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "Accept", style: UIAlertAction.Style.default, handler: { action in
             try? UTIQ.shared.acceptConsent()
             let stubToken = "523393b9b7aa92a534db512af83084506d89e965b95c36f982200e76afcb82cb"
+            self.myWebView.showIds(atid: "UTIQ requesting IDs...", mtid: "")
             UTIQ.shared.startService(stubToken: stubToken, dataCallback: { data in
                 self.myWebView.showIds(atid: data.atid ?? "", mtid: data.mtid ?? "")
             }, errorCallback: { e in
+                self.myWebView.showIds(atid: "Error: \(e)", mtid: "")
                 print("Error: \(e)")
             })
             
         }))
         alert.addAction(UIAlertAction(title: "Reject", style: UIAlertAction.Style.default, handler: { action in
             try? UTIQ.shared.rejectConsent()
-            self.myWebView.showIds(atid: "consent rejected", mtid: "consent rejected")
+            self.myWebView.showIds(atid: "consent rejected", mtid: "")
         }))
         self.present(alert, animated: true, completion: nil)
     }
