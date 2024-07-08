@@ -28,7 +28,8 @@ class ViewController: UIViewController {
         webView.isInspectable = true
         let contentController = self.webView.configuration.userContentController
         contentController.add(self, name: "consentHandler")
-        if let url = URL(string: "https://utiq-test.brand-demo.com/utiq/mobile/mobile-page.html") {
+        let token = "54fc04fcfdee14ad8268d59b3303baf8854bc4d27308a2668dd47ed2a8a54cae"
+        if let url = URL(string: "https://utiq-test.brand-demo.com/utiq/mobile/mobile-page.html?utiq_stub=\(token)") {
             let resource = URLRequest(url: url)
             webView.load(resource)
         }
