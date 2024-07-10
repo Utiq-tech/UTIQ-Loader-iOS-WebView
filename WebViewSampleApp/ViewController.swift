@@ -11,63 +11,83 @@ import UTIQ
 
 class ViewController: UIViewController {
     
-    let myWebView = MyWebView()
+    public lazy var webView: WKWebView = {
+        let userContentController = WKUserContentController()
+        let configuration = WKWebViewConfiguration()
+        configuration.userContentController = userContentController
+        self.webView = WKWebView(frame: .zero, configuration: configuration)
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        webView.isInspectable = true
+        return webView
+    }()
         
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        myWebView.addCoordinator(coordinator: Coordinator(showConsentAction: {
-            self.initUtiq(){
-                self.showConsent()
-            }
-        }))
-        
-        view.addSubview(myWebView.webView)
+        // Showw Att
+        self.initUtiqSdk {
+            self.showConsentPopUp(acceptAction: { [weak self] in
+                try? UTIQ.shared.acceptConsent()
+                self?.startUiq()
+            }, rejectAction: { [weak self] in
+                try? UTIQ.shared.rejectConsent()
+                // TODO:- Show error in webview
+            })
+        }
+        view.addSubview(self.webView)
         NSLayoutConstraint.activate([
-            myWebView.webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            myWebView.webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            myWebView.webView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor),
-            myWebView.webView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor)
+            self.webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            self.webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            self.webView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor),
+            self.webView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor)
         ])
-        
-        myWebView.loadWebview()
+        if let url = URL(string: "https://utiq-test.brand-demo.com/utiq/mobile/native-page.html") {
+            let resource = URLRequest(url: url)
+            webView.load(resource)
+        }
     }
     
-    func initUtiq(action: @escaping (() -> Void)){
+    private func initUtiqSdk(action: @escaping (() -> Void)){
         let utiqConfigs = Bundle.main.url(forResource: "utiq_configs", withExtension: "json")!
         let fileContents = try? String(contentsOf: utiqConfigs)
-        let options = UTIQOptions()
-        options.enableLogging()
-        options.setFallBackConfigJson(json: fileContents!)
-        self.myWebView.showIds(atid: "UTIQ initializing...", mtid: "")
+        let options = UTIQOptions().enableLogging().setFallBackConfigJson(json: fileContents!)
         UTIQ.shared.initialize(sdkToken: "R&Ai^v>TfqCz4Y^HH2?3uk8j", options:  options, success: {
-            self.myWebView.showIds(atid: "UTIQ initialized", mtid: "")
             action()
-        }, failure: { e in
-            self.myWebView.showIds(atid: "Error: \(e)", mtid: "")
-            print("Error: \(e)")
+        }, failure: { [weak self] error in
+            // TODO:- Show error in WebView
+            print("Error: \(error)")
         })
     }
     
-    func showConsent(){
+    private func postUtiqIdsInWebView(adTechPass: String, marTechPass: String) {
+        self.webView.evaluateJavaScript("refreshIds('\(adTechPass)', '\(marTechPass)');") { (result, error) in
+            if let result = result {
+                print("Success: \(result)")
+            } else if let error = error {
+                print("Error: \(error)")
+            }
+        }
+    }
+    
+    private func showConsentPopUp(acceptAction: @escaping (() -> Void), rejectAction: @escaping (() -> Void)) {
+        // TODO:- We need to add a message in the opo to reflect the purpose of this pop, we can copy the same content from the e-commerce App.
         let alert = UIAlertController(title: "Utiq Consent", message: "", preferredStyle: UIAlertController.Style.alert)
         alert.addAction(UIAlertAction(title: "Accept", style: UIAlertAction.Style.default, handler: { action in
-            try? UTIQ.shared.acceptConsent()
-            let stubToken = "523393b9b7aa92a534db512af83084506d89e965b95c36f982200e76afcb82cb"
-            self.myWebView.showIds(atid: "UTIQ requesting IDs...", mtid: "")
-            UTIQ.shared.startService(stubToken: stubToken, dataCallback: { data in
-                self.myWebView.showIds(atid: data.atid ?? "", mtid: data.mtid ?? "")
-            }, errorCallback: { e in
-                self.myWebView.showIds(atid: "Error: \(e)", mtid: "")
-                print("Error: \(e)")
-            })
-            
+            acceptAction()
         }))
         alert.addAction(UIAlertAction(title: "Reject", style: UIAlertAction.Style.default, handler: { action in
-            try? UTIQ.shared.rejectConsent()
-            self.myWebView.showIds(atid: "consent rejected", mtid: "")
+           rejectAction()
         }))
         self.present(alert, animated: true, completion: nil)
+    }
+    
+    private func startUiq() {
+        let stubToken = "523393b9b7aa92a534db512af83084506d89e965b95c36f982200e76afcb82cb"
+        UTIQ.shared.startService(stubToken: stubToken, dataCallback: { [weak self] data in
+            self?.postUtiqIdsInWebView(adTechPass: data.atid ?? "", marTechPass: data.mtid ?? "")
+        }, errorCallback: { [weak self] error in
+            print("Error: \(error)")
+            // TODO:- Show error in WebView
+        })
     }
 }
 
