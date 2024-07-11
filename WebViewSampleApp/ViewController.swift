@@ -16,8 +16,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.initUtiq()
         myWebView.addCoordinator(coordinator: Coordinator(showConsentAction: {
-            self.initUtiq(){
+            if(UTIQ.shared.isInitialized()){
                 self.showConsent()
             }
         }))
@@ -33,7 +34,7 @@ class ViewController: UIViewController {
         myWebView.loadWebview()
     }
     
-    func initUtiq(action: @escaping (() -> Void)){
+    func initUtiq(){
         let utiqConfigs = Bundle.main.url(forResource: "utiq_configs", withExtension: "json")!
         let fileContents = try? String(contentsOf: utiqConfigs)
         let options = UTIQOptions()
@@ -42,7 +43,6 @@ class ViewController: UIViewController {
         self.myWebView.showIds(atid: "UTIQ initializing...", mtid: "")
         UTIQ.shared.initialize(sdkToken: "R&Ai^v>TfqCz4Y^HH2?3uk8j", options:  options, success: {
             self.myWebView.showIds(atid: "UTIQ initialized", mtid: "")
-            action()
         }, failure: { e in
             self.myWebView.showIds(atid: "Error: \(e)", mtid: "")
             print("Error: \(e)")
