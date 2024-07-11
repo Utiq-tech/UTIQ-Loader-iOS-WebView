@@ -8,6 +8,8 @@
 import UIKit
 import WebKit
 import UTIQ
+import AppTrackingTransparency
+import AdSupport
 
 class ViewController: UIViewController {
     
@@ -15,6 +17,9 @@ class ViewController: UIViewController {
         
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Request ATT permission
+        checkTrackingAuthorization()
         
         self.initUtiq()
         myWebView.addCoordinator(coordinator: Coordinator(showConsentAction: {
@@ -34,6 +39,43 @@ class ViewController: UIViewController {
         myWebView.loadWebview()
     }
     
+    func checkTrackingAuthorization() {
+            if #available(iOS 14, *) {
+                let trackingStatus = ATTrackingManager.trackingAuthorizationStatus
+                handleTrackingAuthorization(status: trackingStatus)
+            } else {
+                // ATT is not available, handle accordingly
+                print("ATT is only available on iOS 14 and later")
+            }
+        }
+
+        func handleTrackingAuthorization(status: ATTrackingManager.AuthorizationStatus) {
+            switch status {
+            case .notDetermined:
+                // Request tracking authorization
+                requestTrackingAuthorization()
+            case .restricted, .denied:
+                // Tracking is restricted or denied
+                print("Tracking permission: \(status == .restricted ? "Restricted" : "Denied")")
+            case .authorized:
+                // Tracking is authorized
+                print("Tracking permission: Authorized")
+                // Optionally, retrieve IDFA
+                let idfa = ASIdentifierManager.shared().advertisingIdentifier
+                print("IDFA: \(idfa)")
+            @unknown default:
+                print("Tracking permission: Unknown status")
+            }
+        }
+
+        func requestTrackingAuthorization() {
+            ATTrackingManager.requestTrackingAuthorization { status in
+                DispatchQueue.main.async {
+                    self.handleTrackingAuthorization(status: status)
+                }
+            }
+        }
+    
     func initUtiq(){
         let utiqConfigs = Bundle.main.url(forResource: "utiq_configs", withExtension: "json")!
         let fileContents = try? String(contentsOf: utiqConfigs)
@@ -42,7 +84,9 @@ class ViewController: UIViewController {
         options.setFallBackConfigJson(json: fileContents!)
         self.myWebView.showIds(atid: "UTIQ initializing...", mtid: "")
         UTIQ.shared.initialize(sdkToken: "R&Ai^v>TfqCz4Y^HH2?3uk8j", options:  options, success: {
-            self.myWebView.showIds(atid: "UTIQ initialized", mtid: "")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self.myWebView.showIds(atid: "UTIQ initialized", mtid: "")
+            }
         }, failure: { e in
             self.myWebView.showIds(atid: "Error: \(e)", mtid: "")
             print("Error: \(e)")
@@ -65,7 +109,7 @@ class ViewController: UIViewController {
         }))
         alert.addAction(UIAlertAction(title: "Reject", style: UIAlertAction.Style.default, handler: { action in
             try? UTIQ.shared.rejectConsent()
-            self.myWebView.showIds(atid: "consent rejected", mtid: "")
+            self.myWebView.showIds(atid: "Consent rejected", mtid: "")
         }))
         self.present(alert, animated: true, completion: nil)
     }
