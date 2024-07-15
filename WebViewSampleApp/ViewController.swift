@@ -21,17 +21,19 @@ class ViewController: UIViewController {
         let utiqConsent = UtiqConsentVC(acceptAction: {
             try? UTIQ.shared.acceptConsent()
             let stubToken = "523393b9b7aa92a534db512af83084506d89e965b95c36f982200e76afcb82cb"
-            self.myWebView.showIds(atid: "UTIQ requesting IDs...", mtid: "")
+            self.myWebView.showTextMessage(text: "UTIQ requesting IDs...")
             UTIQ.shared.startService(stubToken: stubToken, dataCallback: { data in
                 self.myWebView.showIds(atid: data.atid ?? "", mtid: data.mtid ?? "")
+                self.myWebView.showTextMessage(text: "UTIQ IDs successfully fetched")
             }, errorCallback: { e in
-                self.myWebView.showIds(atid: "Error: \(e)", mtid: "")
+                self.myWebView.showTextMessage(text: "Error: \(e)")
                 print("Error: \(e)")
             })
             self.dismiss(animated: true)
         }, rejectAction: {
             try? UTIQ.shared.rejectConsent()
-            self.myWebView.showIds(atid: "Consent rejected", mtid: "")
+            self.myWebView.showTextMessage(text: "Consent rejected")
+            self.myWebView.showIds(atid: "", mtid: "")
             self.dismiss(animated: true)
         })
         
@@ -55,6 +57,7 @@ class ViewController: UIViewController {
         ])
         
         myWebView.loadWebview()
+        print("iran1 -> ")
     }
     
     func checkTrackingAuthorization() {
@@ -100,15 +103,26 @@ class ViewController: UIViewController {
         let options = UTIQOptions()
         options.enableLogging()
         options.setFallBackConfigJson(json: fileContents!)
-        self.myWebView.showIds(atid: "UTIQ initializing...", mtid: "")
+        self.myWebView.showTextMessage(text: "UTIQ initializing...")
         UTIQ.shared.initialize(sdkToken: "R&Ai^v>TfqCz4Y^HH2?3uk8j", options:  options, success: {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                self.myWebView.showIds(atid: "UTIQ initialized", mtid: "")
+                self.myWebView.showTextMessage(text: "UTIQ initialized")
             }
         }, failure: { e in
-            self.myWebView.showIds(atid: "Error: \(e)", mtid: "")
+            self.myWebView.showTextMessage(text: "Error: \(e)")
             print("Error: \(e)")
         })
+    }
+}
+
+extension ViewController: WKScriptMessageHandler {
+    
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        print("iran2 -> ", message)
+        guard let dict = message.body as? [String : AnyObject] else {
+            return
+        }
+        print("Js Message", dict)
     }
 }
 

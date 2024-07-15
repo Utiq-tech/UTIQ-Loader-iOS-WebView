@@ -45,4 +45,15 @@ class MyWebView{
             }
         }
     }
+    
+    func showTextMessage(text: String){
+        //Using 'self.webView.evaluateJavaScript' we are executing the javascript code on the webside and send data in real time
+        self.webView.evaluateJavaScript("showTextMessage('\(text)');") { (result, error) in
+            if let result = result {
+                print("Success: \(result)")
+            } else if let error = error {
+                print("Error: \(error)")
+            }
+        }
+    }
 }
