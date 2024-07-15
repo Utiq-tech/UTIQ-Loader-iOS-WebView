@@ -18,8 +18,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let utiqConsent = UtiqConsentVC()
-        utiqConsent.setActions(acceptAction: {
+        let utiqConsent = UtiqConsentVC(acceptAction: {
             try? UTIQ.shared.acceptConsent()
             let stubToken = "523393b9b7aa92a534db512af83084506d89e965b95c36f982200e76afcb82cb"
             self.myWebView.showIds(atid: "UTIQ requesting IDs...", mtid: "")

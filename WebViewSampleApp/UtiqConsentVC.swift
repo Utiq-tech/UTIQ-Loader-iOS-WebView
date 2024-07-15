@@ -10,8 +10,8 @@ import UIKit
 
 class UtiqConsentVC: UIViewController {
     
-    private var acceptAction: (()->Void)? = nil
-    private var rejectAction: (()->Void)? = nil
+    private var acceptAction: (() -> Void)?
+    private var rejectAction: (() -> Void)?
     
     override func loadView() {
         self.view = loadXib()
@@ -21,16 +21,21 @@ class UtiqConsentVC: UIViewController {
         super.viewDidLoad()
     }
     
+    init(acceptAction: @escaping () -> Void, rejectAction: @escaping (() -> Void)) {
+        self.acceptAction = acceptAction
+        self.rejectAction = rejectAction
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    
     func loadXib() -> UIView {
         let bundle = Bundle(for: type(of: self))
         let nib = UINib(nibName: "UtiqConsent", bundle: bundle)
         let view = nib.instantiate(withOwner: self, options: nil).first as? UIView
         return view!
-    }
-    
-    func setActions(acceptAction: @escaping ()->Void, rejectAction: @escaping ()->Void){
-        self.acceptAction = acceptAction
-        self.rejectAction = rejectAction
     }
     
     @IBAction func acceptButton(_ sender: Any) {
