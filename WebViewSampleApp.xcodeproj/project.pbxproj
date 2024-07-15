@@ -11,6 +11,8 @@
 		004472C62C22CB3B00D9CE83 /* MyWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 004472C52C22CB3B00D9CE83 /* MyWebView.swift */; };
 		004472D42C23098400D9CE83 /* UTIQ in Frameworks */ = {isa = PBXBuildFile; productRef = 004472D32C23098400D9CE83 /* UTIQ */; };
 		004472D62C230A6000D9CE83 /* utiq_configs.json in Resources */ = {isa = PBXBuildFile; fileRef = 004472D52C230A6000D9CE83 /* utiq_configs.json */; };
+		009DF4562C414B5200A9B186 /* UtiqConsent.xib in Resources */ = {isa = PBXBuildFile; fileRef = 009DF4552C414B5100A9B186 /* UtiqConsent.xib */; };
+		009DF4582C41538C00A9B186 /* UtiqConsentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009DF4572C41538C00A9B186 /* UtiqConsentVC.swift */; };
 		C9BAD98D2C0E159A008B3D81 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9BAD98C2C0E159A008B3D81 /* AppDelegate.swift */; };
 		C9BAD98F2C0E159A008B3D81 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9BAD98E2C0E159A008B3D81 /* SceneDelegate.swift */; };
 		C9BAD9912C0E159A008B3D81 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9BAD9902C0E159A008B3D81 /* ViewController.swift */; };
@@ -44,6 +46,8 @@
 		004472AE2C207E7E00D9CE83 /* Coordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		004472C52C22CB3B00D9CE83 /* MyWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyWebView.swift; sourceTree = "<group>"; };
 		004472D52C230A6000D9CE83 /* utiq_configs.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = utiq_configs.json; sourceTree = "<group>"; };
+		009DF4552C414B5100A9B186 /* UtiqConsent.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UtiqConsent.xib; sourceTree = "<group>"; };
+		009DF4572C41538C00A9B186 /* UtiqConsentVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtiqConsentVC.swift; sourceTree = "<group>"; };
 		C9BAD9892C0E159A008B3D81 /* WebViewSampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WebViewSampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9BAD98C2C0E159A008B3D81 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C9BAD98E2C0E159A008B3D81 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -120,6 +124,8 @@
 				C9BAD99A2C0E159E008B3D81 /* Info.plist */,
 				C9BAD9BC2C0E1650008B3D81 /* index.html */,
 				004472D52C230A6000D9CE83 /* utiq_configs.json */,
+				009DF4552C414B5100A9B186 /* UtiqConsent.xib */,
+				009DF4572C41538C00A9B186 /* UtiqConsentVC.swift */,
 			);
 			path = WebViewSampleApp;
 			sourceTree = "<group>";
@@ -252,6 +258,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C9BAD9962C0E159E008B3D81 /* Assets.xcassets in Resources */,
+				009DF4562C414B5200A9B186 /* UtiqConsent.xib in Resources */,
 				004472D62C230A6000D9CE83 /* utiq_configs.json in Resources */,
 				C9BAD9BD2C0E1650008B3D81 /* index.html in Resources */,
 				C9BAD9992C0E159E008B3D81 /* Base in Resources */,
@@ -281,6 +288,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				004472C62C22CB3B00D9CE83 /* MyWebView.swift in Sources */,
+				009DF4582C41538C00A9B186 /* UtiqConsentVC.swift in Sources */,
 				004472AF2C207E7E00D9CE83 /* Coordinator.swift in Sources */,
 				C9BAD9912C0E159A008B3D81 /* ViewController.swift in Sources */,
 				C9BAD98D2C0E159A008B3D81 /* AppDelegate.swift in Sources */,

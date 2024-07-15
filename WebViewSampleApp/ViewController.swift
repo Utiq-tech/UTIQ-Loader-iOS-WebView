@@ -14,17 +14,36 @@ import AdSupport
 class ViewController: UIViewController {
     
     let myWebView = MyWebView()
-        
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let utiqConsent = UtiqConsentVC()
+        utiqConsent.setActions(acceptAction: {
+            try? UTIQ.shared.acceptConsent()
+            let stubToken = "523393b9b7aa92a534db512af83084506d89e965b95c36f982200e76afcb82cb"
+            self.myWebView.showIds(atid: "UTIQ requesting IDs...", mtid: "")
+            UTIQ.shared.startService(stubToken: stubToken, dataCallback: { data in
+                self.myWebView.showIds(atid: data.atid ?? "", mtid: data.mtid ?? "")
+            }, errorCallback: { e in
+                self.myWebView.showIds(atid: "Error: \(e)", mtid: "")
+                print("Error: \(e)")
+            })
+            self.dismiss(animated: true)
+        }, rejectAction: {
+            try? UTIQ.shared.rejectConsent()
+            self.myWebView.showIds(atid: "Consent rejected", mtid: "")
+            self.dismiss(animated: true)
+        })
         
         // Request ATT permission
         checkTrackingAuthorization()
         
         self.initUtiq()
+        
         myWebView.addCoordinator(coordinator: Coordinator(showConsentAction: {
             if(UTIQ.shared.isInitialized()){
-                self.showConsent()
+                self.present(utiqConsent, animated: true, completion: nil)
             }
         }))
         
@@ -49,32 +68,32 @@ class ViewController: UIViewController {
             }
         }
 
-        func handleTrackingAuthorization(status: ATTrackingManager.AuthorizationStatus) {
-            switch status {
-            case .notDetermined:
-                // Request tracking authorization
-                requestTrackingAuthorization()
-            case .restricted, .denied:
-                // Tracking is restricted or denied
-                print("Tracking permission: \(status == .restricted ? "Restricted" : "Denied")")
-            case .authorized:
-                // Tracking is authorized
-                print("Tracking permission: Authorized")
-                // Optionally, retrieve IDFA
-                let idfa = ASIdentifierManager.shared().advertisingIdentifier
-                print("IDFA: \(idfa)")
-            @unknown default:
-                print("Tracking permission: Unknown status")
-            }
+    func handleTrackingAuthorization(status: ATTrackingManager.AuthorizationStatus) {
+        switch status {
+        case .notDetermined:
+            // Request tracking authorization
+            requestTrackingAuthorization()
+        case .restricted, .denied:
+            // Tracking is restricted or denied
+            print("Tracking permission: \(status == .restricted ? "Restricted" : "Denied")")
+        case .authorized:
+            // Tracking is authorized
+            print("Tracking permission: Authorized")
+            // Optionally, retrieve IDFA
+            let idfa = ASIdentifierManager.shared().advertisingIdentifier
+            print("IDFA: \(idfa)")
+        @unknown default:
+            print("Tracking permission: Unknown status")
         }
+    }
 
-        func requestTrackingAuthorization() {
-            ATTrackingManager.requestTrackingAuthorization { status in
-                DispatchQueue.main.async {
-                    self.handleTrackingAuthorization(status: status)
-                }
+    func requestTrackingAuthorization() {
+        ATTrackingManager.requestTrackingAuthorization { status in
+            DispatchQueue.main.async {
+                self.handleTrackingAuthorization(status: status)
             }
         }
+    }
     
     func initUtiq(){
         let utiqConfigs = Bundle.main.url(forResource: "utiq_configs", withExtension: "json")!
@@ -92,26 +111,6 @@ class ViewController: UIViewController {
             print("Error: \(e)")
         })
     }
-    
-    func showConsent(){
-        let alert = UIAlertController(title: "Utiq Consent", message: "", preferredStyle: UIAlertController.Style.alert)
-        alert.addAction(UIAlertAction(title: "Accept", style: UIAlertAction.Style.default, handler: { action in
-            try? UTIQ.shared.acceptConsent()
-            let stubToken = "523393b9b7aa92a534db512af83084506d89e965b95c36f982200e76afcb82cb"
-            self.myWebView.showIds(atid: "UTIQ requesting IDs...", mtid: "")
-            UTIQ.shared.startService(stubToken: stubToken, dataCallback: { data in
-                self.myWebView.showIds(atid: data.atid ?? "", mtid: data.mtid ?? "")
-            }, errorCallback: { e in
-                self.myWebView.showIds(atid: "Error: \(e)", mtid: "")
-                print("Error: \(e)")
-            })
-            
-        }))
-        alert.addAction(UIAlertAction(title: "Reject", style: UIAlertAction.Style.default, handler: { action in
-            try? UTIQ.shared.rejectConsent()
-            self.myWebView.showIds(atid: "Consent rejected", mtid: "")
-        }))
-        self.present(alert, animated: true, completion: nil)
-    }
 }
+
 
