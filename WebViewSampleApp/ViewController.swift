@@ -36,17 +36,18 @@ class ViewController: UIViewController {
             self.myWebView.showIds(atid: "", mtid: "")
             self.dismiss(animated: true)
         })
+        myWebView.setConsentAction(
+            showConsentAction: { [weak self] in
+                if(UTIQ.shared.isInitialized()){
+                    self?.present(utiqConsent, animated: true, completion: nil)
+                }
+            }
+        )
         
         // Request ATT permission
         checkTrackingAuthorization()
         
         self.initUtiq()
-        
-        myWebView.addCoordinator(coordinator: Coordinator(showConsentAction: {
-            if(UTIQ.shared.isInitialized()){
-                self.present(utiqConsent, animated: true, completion: nil)
-            }
-        }))
         
         view.addSubview(myWebView.webView)
         NSLayoutConstraint.activate([
@@ -112,17 +113,6 @@ class ViewController: UIViewController {
             self.myWebView.showTextMessage(text: "Error: \(e)")
             print("Error: \(e)")
         })
-    }
-}
-
-extension ViewController: WKScriptMessageHandler {
-    
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        print("iran2 -> ", message)
-        guard let dict = message.body as? [String : AnyObject] else {
-            return
-        }
-        print("Js Message", dict)
     }
 }
 

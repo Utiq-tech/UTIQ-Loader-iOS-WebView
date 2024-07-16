@@ -8,14 +8,24 @@
 import Foundation
 import WebKit
 
-class MyWebView{
+class MyWebView : NSObject, WKNavigationDelegate, WKScriptMessageHandler{
+    
+    var showConsentAction: (() -> Void)? = nil
     
     public lazy var webView: WKWebView = {
-        let webView = WKWebView(frame: .zero)
+        let userContentController = WKUserContentController()
+        userContentController.add(self, name: "bridge")
+        let configuration = WKWebViewConfiguration()
+        configuration.userContentController = userContentController
+        let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.translatesAutoresizingMaskIntoConstraints = false
         webView.isInspectable = true
         return webView
     }()
+    
+    func setConsentAction(showConsentAction: @escaping (() -> Void)){
+        self.showConsentAction = showConsentAction
+    }
     
     func loadWebview(){
         if let url = URL(string: "https://utiq-test.brand-demo.com/utiq/mobile/native-page.html") {
@@ -23,16 +33,6 @@ class MyWebView{
             let resource = URLRequest(url: url)
             webView.load(resource)
         }
-    }
-    
-    func addCoordinator(coordinator: Coordinator){
-        let userContentController = WKUserContentController()
-        userContentController.add(coordinator, name: "bridge")
-        let configuration = WKWebViewConfiguration()
-        configuration.userContentController = userContentController
-        webView = WKWebView(frame: .zero, configuration: configuration)
-        webView.translatesAutoresizingMaskIntoConstraints = false
-        webView.isInspectable = true
     }
     
     func showIds(atid: String, mtid: String){
@@ -54,6 +54,21 @@ class MyWebView{
             } else if let error = error {
                 print("Error: \(error)")
             }
+        }
+    }
+    
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        handleMessage(msg: message.body as! String)
+    }
+    
+    func handleMessage(msg: String){
+        switch(msg){
+            case "show_consent" : do {
+                if let action = showConsentAction{
+                    action()
+                }
+            }
+            default: break
         }
     }
 }
