@@ -31,22 +31,18 @@ class UtiqConsentVC: UIViewController {
         super.init(coder: coder)
     }
     
-    func loadXib() -> UIView {
+    private func loadXib() -> UIView {
         let bundle = Bundle(for: type(of: self))
         let nib = UINib(nibName: "UtiqConsent", bundle: bundle)
         let view = nib.instantiate(withOwner: self, options: nil).first as? UIView
         return view!
     }
     
-    @IBAction func acceptButton(_ sender: Any) {
-        if let action = acceptAction{
-            action()
-        }
+    @IBAction private func acceptButton(_ sender: Any) {
+        acceptAction?()
     }
     
-    @IBAction func rejectButton(_ sender: Any) {
-        if let action = rejectAction{
-            action()
-        }
+    @IBAction private func rejectButton(_ sender: Any) {
+        rejectAction?()
     }
 }

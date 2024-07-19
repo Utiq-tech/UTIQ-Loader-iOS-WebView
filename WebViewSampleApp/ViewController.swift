@@ -13,15 +13,20 @@ import AdSupport
 
 class ViewController: UIViewController {
     
-    let myWebView = MyWebView()
+    private let myWebView = MyWebView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.initUtiq()
+        // Request ATT permission
+        self.checkTrackingAuthorization()
+        // Change show popuo to start UTIQ
+        // If the popup was shown before, don't show again.
         let utiqConsent = UtiqConsentVC(acceptAction: {
             try? UTIQ.shared.acceptConsent()
             let stubToken = "523393b9b7aa92a534db512af83084506d89e965b95c36f982200e76afcb82cb"
             self.myWebView.showTextMessage(text: "UTIQ requesting IDs...")
+            // we need to start the service from webview not from here.
             UTIQ.shared.startService(stubToken: stubToken, dataCallback: { data in
                 self.myWebView.showIds(atid: data.atid ?? "", mtid: data.mtid ?? "")
                 self.myWebView.showTextMessage(text: "UTIQ IDs successfully fetched")
@@ -30,24 +35,17 @@ class ViewController: UIViewController {
                 print("Error: \(e)")
             })
             self.dismiss(animated: true)
-        }, rejectAction: {
+        }, rejectAction: { [weak self] in
             try? UTIQ.shared.rejectConsent()
-            self.myWebView.showTextMessage(text: "Consent rejected")
-            self.myWebView.showIds(atid: "", mtid: "")
-            self.dismiss(animated: true)
+            self?.myWebView.showTextMessage(text: "Consent rejected")
+            self?.myWebView.showIds(atid: "", mtid: "")
+            self?.dismiss(animated: true)
         })
-        myWebView.setConsentAction(
-            showConsentAction: { [weak self] in
-                if(UTIQ.shared.isInitialized()){
-                    self?.present(utiqConsent, animated: true, completion: nil)
-                }
+        myWebView.setConsentAction{ [weak self] in
+            if(UTIQ.shared.isInitialized()) {
+                self?.present(utiqConsent, animated: true, completion: nil)
             }
-        )
-        
-        // Request ATT permission
-        checkTrackingAuthorization()
-        
-        self.initUtiq()
+        }
         
         view.addSubview(myWebView.webView)
         NSLayoutConstraint.activate([
@@ -56,12 +54,10 @@ class ViewController: UIViewController {
             myWebView.webView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor),
             myWebView.webView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor)
         ])
-        
         myWebView.loadWebview()
-        print("iran1 -> ")
     }
     
-    func checkTrackingAuthorization() {
+    private func checkTrackingAuthorization() {
             if #available(iOS 14, *) {
                 let trackingStatus = ATTrackingManager.trackingAuthorizationStatus
                 handleTrackingAuthorization(status: trackingStatus)
@@ -71,7 +67,7 @@ class ViewController: UIViewController {
             }
         }
 
-    func handleTrackingAuthorization(status: ATTrackingManager.AuthorizationStatus) {
+    private func handleTrackingAuthorization(status: ATTrackingManager.AuthorizationStatus) {
         switch status {
         case .notDetermined:
             // Request tracking authorization
@@ -90,7 +86,7 @@ class ViewController: UIViewController {
         }
     }
 
-    func requestTrackingAuthorization() {
+    private func requestTrackingAuthorization() {
         ATTrackingManager.requestTrackingAuthorization { status in
             DispatchQueue.main.async {
                 self.handleTrackingAuthorization(status: status)
@@ -98,7 +94,7 @@ class ViewController: UIViewController {
         }
     }
     
-    func initUtiq(){
+    private func initUtiq() {
         let utiqConfigs = Bundle.main.url(forResource: "utiq_configs", withExtension: "json")!
         let fileContents = try? String(contentsOf: utiqConfigs)
         let options = UTIQOptions()
