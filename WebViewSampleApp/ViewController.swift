@@ -14,36 +14,36 @@ import AdSupport
 class ViewController: UIViewController {
     
     private let myWebView = MyWebView()
+    private let stubToken = "523393b9b7aa92a534db512af83084506d89e965b95c36f982200e76afcb82cb"
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.initUtiq()
         // Request ATT permission
         self.checkTrackingAuthorization()
-        // Change show popuo to start UTIQ
-        // If the popup was shown before, don't show again.
         let utiqConsent = UtiqConsentVC(acceptAction: {
+            UserDefaultsUtils.setConsent(value: "true")
             try? UTIQ.shared.acceptConsent()
-            let stubToken = "523393b9b7aa92a534db512af83084506d89e965b95c36f982200e76afcb82cb"
             self.myWebView.showTextMessage(text: "UTIQ requesting IDs...")
             // we need to start the service from webview not from here.
-            UTIQ.shared.startService(stubToken: stubToken, dataCallback: { data in
-                self.myWebView.showIds(atid: data.atid ?? "", mtid: data.mtid ?? "")
-                self.myWebView.showTextMessage(text: "UTIQ IDs successfully fetched")
-            }, errorCallback: { e in
-                self.myWebView.showTextMessage(text: "Error: \(e)")
-                print("Error: \(e)")
-            })
+            self.utiqStartService()
             self.dismiss(animated: true)
         }, rejectAction: { [weak self] in
+            UserDefaultsUtils.setConsent(value: "false")
             try? UTIQ.shared.rejectConsent()
             self?.myWebView.showTextMessage(text: "Consent rejected")
             self?.myWebView.showIds(atid: "", mtid: "")
             self?.dismiss(animated: true)
         })
+        
         myWebView.setConsentAction{ [weak self] in
             if(UTIQ.shared.isInitialized()) {
-                self?.present(utiqConsent, animated: true, completion: nil)
+                if(UserDefaultsUtils.getConsent() == ""){
+                    self?.present(utiqConsent, animated: true, completion: nil)
+                }
+                else{
+                    self?.utiqStartService()
+                }
             }
         }
         
@@ -55,6 +55,16 @@ class ViewController: UIViewController {
             myWebView.webView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor)
         ])
         myWebView.loadWebview()
+    }
+    
+    private func utiqStartService(){
+        UTIQ.shared.startService(stubToken: stubToken, dataCallback: { data in
+            self.myWebView.showIds(atid: data.atid ?? "", mtid: data.mtid ?? "")
+            self.myWebView.showTextMessage(text: "UTIQ IDs successfully fetched")
+        }, errorCallback: { e in
+            self.myWebView.showTextMessage(text: "Error: \(e)")
+            print("Error: \(e)")
+        })
     }
     
     private func checkTrackingAuthorization() {
