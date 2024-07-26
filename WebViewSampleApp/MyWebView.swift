@@ -28,7 +28,7 @@ class MyWebView : NSObject, WKNavigationDelegate, WKScriptMessageHandler {
     }
     
     func loadWebview() {
-        if let url = URL(string: "https://utiq-test.brand-demo.com/utiq/mobile/native-page.html") {
+        if let url = URL(string: "https://utiq-test.utest1.work/utiq/mobile/native-page.html") {
             let resource = URLRequest(url: url)
             webView.load(resource)
         }
