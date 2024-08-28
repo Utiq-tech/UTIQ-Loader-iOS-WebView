@@ -1,14 +1,15 @@
 {
+  "originHash" : "5dc1141fb7b07c039a86366a3ecb4560e9db23c7f6c3b546f53d3738682b7c8c",
   "pins" : [
     {
       "identity" : "utiq-ios-sdk",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Utiq-tech/UTIQ-iOS-SDK",
       "state" : {
-        "revision" : "14c887052411447d3f9a72f981a0ecd8017156f6",
-        "version" : "0.1.45"
+        "revision" : "b6ec7c04015c88fa6c55b2b42c23adf5c08de928",
+        "version" : "0.1.55"
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

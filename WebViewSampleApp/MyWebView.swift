@@ -46,7 +46,7 @@ class MyWebView : NSObject, WKNavigationDelegate, WKScriptMessageHandler {
     }
     
     func showTextMessage(text: String) {
-        // Using 'self.webView.evaluateJavaScript' we are executing the javascript code on the webside and send data in real time
+        // Using 'self.webView.evaluateJavaScript' we are executing the javascript code on the web side and send data in real time
         self.webView.evaluateJavaScript("showTextMessage('\(text)');") { (result, error) in
             if let result = result {
                 print("Success: \(result)")

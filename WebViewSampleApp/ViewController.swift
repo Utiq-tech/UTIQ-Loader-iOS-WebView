@@ -7,7 +7,7 @@
 
 import UIKit
 import WebKit
-import UTIQ
+import Utiq
 import AppTrackingTransparency
 import AdSupport
 
@@ -23,11 +23,11 @@ class ViewController: UIViewController {
         // Change show popuo to start UTIQ
         // If the popup was shown before, don't show again.
         let utiqConsent = UtiqConsentVC(acceptAction: {
-            try? UTIQ.shared.acceptConsent()
+            try? Utiq.shared.acceptConsent()
             let stubToken = "523393b9b7aa92a534db512af83084506d89e965b95c36f982200e76afcb82cb"
             self.myWebView.showTextMessage(text: "UTIQ requesting IDs...")
             // we need to start the service from webview not from here.
-            UTIQ.shared.startService(stubToken: stubToken, dataCallback: { data in
+            Utiq.shared.startService(stubToken: stubToken, dataCallback: { data in
                 self.myWebView.showIds(atid: data.atid ?? "", mtid: data.mtid ?? "")
                 self.myWebView.showTextMessage(text: "UTIQ IDs successfully fetched")
             }, errorCallback: { e in
@@ -36,13 +36,13 @@ class ViewController: UIViewController {
             })
             self.dismiss(animated: true)
         }, rejectAction: { [weak self] in
-            try? UTIQ.shared.rejectConsent()
+            try? Utiq.shared.rejectConsent()
             self?.myWebView.showTextMessage(text: "Consent rejected")
             self?.myWebView.showIds(atid: "", mtid: "")
             self?.dismiss(animated: true)
         })
         myWebView.setConsentAction{ [weak self] in
-            if(UTIQ.shared.isInitialized()) {
+            if(Utiq.shared.isInitialized()) {
                 self?.present(utiqConsent, animated: true, completion: nil)
             }
         }
@@ -97,11 +97,11 @@ class ViewController: UIViewController {
     private func initUtiq() {
         let utiqConfigs = Bundle.main.url(forResource: "utiq_configs", withExtension: "json")!
         let fileContents = try? String(contentsOf: utiqConfigs)
-        let options = UTIQOptions()
+        let options = UtiqOptions()
         options.enableLogging()
         options.setFallBackConfigJson(json: fileContents!)
         self.myWebView.showTextMessage(text: "UTIQ initializing...")
-        UTIQ.shared.initialize(sdkToken: "R&Ai^v>TfqCz4Y^HH2?3uk8j", options:  options, success: {
+        Utiq.shared.initialize(sdkToken: "R&Ai^v>TfqCz4Y^HH2?3uk8j", options:  options, success: {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 self.myWebView.showTextMessage(text: "UTIQ initialized")
             }
